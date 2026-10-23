@@ -1,594 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BRJ EMPIRE | Member Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRJ EMPIRE | Member Portal</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #070b14;
-      --panel: #101827;
-      --border: #26334a;
-      --blue: #4f8cff;
-      --text: #f3f6ff;
-      --muted: #95a3ba;
-      --green: #37d9a0;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(ellipse at top, #13254a 0%, transparent 48%),
-        var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      width: 100%;
-      padding: 22px 7%;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .brand {
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 1px;
-    }
-
-    .brand span {
-      color: var(--blue);
-    }
-
-    .status {
-      color: var(--green);
-      font-size: 12px;
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 35px 16px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 440px;
-      padding: 30px;
-      background: rgba(16,24,39,.96);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: 0 25px 80px rgba(0,0,0,.35);
-    }
-
-    .eyebrow {
-      color: var(--blue);
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      font-size: 29px;
-      margin-bottom: 9px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
-
-    .tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      padding: 5px;
-      background: #080e19;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      gap: 5px;
-      margin-bottom: 24px;
-    }
-
-    .tab {
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--muted);
-      padding: 12px 5px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .tab.active {
-      background: #23395f;
-      color: white;
-    }
-
-    .field {
-      margin-bottom: 17px;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #080e19;
-      color: white;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(79,140,255,.12);
-    }
-
-    .primary {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(100deg, #3979f6, #6b69ff);
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 5px;
-    }
-
-    .primary:disabled {
-      opacity: .6;
-      cursor: wait;
-    }
-
-    .message {
-      display: none;
-      padding: 12px;
-      margin-bottom: 17px;
-      border-radius: 9px;
-      font-size: 13px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .message.show {
-      display: block;
-    }
-
-    .message.error {
-      color: #ffb4b4;
-      background: #3a1b25;
-      border: 1px solid #71313f;
-    }
-
-    .message.success {
-      color: #a8ffdc;
-      background: #10352b;
-      border: 1px solid #246b55;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 23px 0;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
-      text-align: center;
-    }
-
-    .dashboard-name {
-      color: var(--green);
-      margin: 12px 0 20px;
-      overflow-wrap: anywhere;
-    }
-
-    .secondary {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: white;
-      padding: 13px;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 12px;
-    }
-
-    footer {
-      text-align: center;
-      color: #718097;
-      font-size: 12px;
-      padding: 20px;
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 23px 19px;
-      }
-
-      h1 {
-        font-size: 26px;
-      }
-
-      header {
-        padding: 19px 5%;
-      }
-    }
-  </style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#070b14;--panel:#101827;--border:#26334a;--blue:#4f8cff;--text:#f3f6ff;--muted:#95a3ba;--green:#37d9a0}
+body{min-height:100vh;background:radial-gradient(ellipse at top,#13254a,transparent 48%),var(--bg);color:var(--text);font-family:Arial,sans-serif;display:flex;flex-direction:column}
+header{padding:22px 7%;border-bottom:1px solid #ffffff14;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:22px;font-weight:900;letter-spacing:1px}.brand span{color:var(--blue)}
+.status{font-size:12px;color:var(--green)}
+main{flex:1;display:flex;justify-content:center;align-items:center;padding:35px 16px}
+.card{width:100%;max-width:440px;padding:30px;background:var(--panel);border:1px solid var(--border);border-radius:22px;box-shadow:0 25px 80px #0006}
+.eyebrow{font-size:11px;color:var(--blue);font-weight:bold;letter-spacing:2px;margin-bottom:12px}
+h1{font-size:29px;margin-bottom:9px}
+.subtitle{font-size:14px;line-height:1.6;color:var(--muted);margin-bottom:25px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;background:#080e19;border:1px solid var(--border);border-radius:12px;margin-bottom:24px}
+.tab{padding:12px 5px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:14px;font-weight:bold;cursor:pointer}
+.tab.active{background:#23395f;color:white}
+.field{margin-bottom:17px}
+label{display:block;font-size:13px;font-weight:bold;margin-bottom:8px}
+input{width:100%;padding:14px;border:1px solid var(--border);border-radius:10px;background:#080e19;color:white;font-size:15px;outline:none}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #4f8cff20}
+.primary{width:100%;padding:15px;border:0;border-radius:10px;background:linear-gradient(100deg,#3979f6,#6b69ff);color:white;font-size:15px;font-weight:bold;cursor:pointer;margin-top:5px}
+.primary:disabled{opacity:.6;cursor:wait}
+.message{display:none;padding:12px;margin-bottom:17px;border-radius:9px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.message.show{display:block}.message.error{color:#ffb4b4;background:#3a1b25;border:1px solid #71313f}.message.success{color:#a8ffdc;background:#10352b;border:1px solid #246b55}
+.hidden{display:none!important}
+.divider{height:1px;background:var(--border);margin:23px 0}
+.small{font-size:12px;color:var(--muted);line-height:1.7;text-align:center}
+.dashboard-name{color:var(--green);margin:12px 0 20px;overflow-wrap:anywhere}
+.secondary{width:100%;padding:13px;border:1px solid var(--border);border-radius:10px;background:transparent;color:white;cursor:pointer;margin-top:12px}
+footer{text-align:center;color:#718097;font-size:12px;padding:20px}
+@media(max-width:480px){.card{padding:23px 19px}h1{font-size:26px}header{padding:19px 5%}}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="brand">BRJ <span>EMPIRE</span></div>
-    <div class="status">● Member Portal</div>
-  </header>
+<header>
+  <div class="brand">BRJ <span>EMPIRE</span></div>
+  <div class="status">● Member Portal</div>
+</header>
 
-  <main>
-    <section class="card" id="authCard">
-      <div class="eyebrow">MEMBER ACCESS</div>
+<main>
+<section class="card" id="authCard">
+  <div class="eyebrow">MEMBER ACCESS</div>
+  <h1 id="heading">Welcome back</h1>
+  <p class="subtitle" id="subtitle">Sign in to continue to your account.</p>
 
-      <h1 id="heading">Welcome back</h1>
-      <p class="subtitle" id="subtitle">
-        Sign in to continue to your account.
-      </p>
+  <div class="tabs">
+    <button type="button" class="tab active" id="loginTab">Sign In</button>
+    <button type="button" class="tab" id="registerTab">Create Account</button>
+  </div>
 
-      <div class="tabs">
-        <button type="button" class="tab active" id="loginTab">
-          Sign In
-        </button>
-        <button type="button" class="tab" id="registerTab">
-          Create Account
-        </button>
-      </div>
+  <div id="message" class="message" role="status" aria-live="polite"></div>
 
-      <div id="message" class="message" role="status" aria-live="polite"></div>
+  <form id="authForm">
+    <div class="field hidden" id="nameField">
+      <label for="fullName">Full Name</label>
+      <input id="fullName" type="text" autocomplete="name" placeholder="Enter your full name">
+    </div>
 
-      <form id="authForm">
-        <div class="field hidden" id="nameField">
-          <label for="fullName">Full Name</label>
-          <input
-            id="fullName"
-            type="text"
-            autocomplete="name"
-            placeholder="Enter your full name"
-          >
-        </div>
+    <div class="field">
+      <label for="email">Email Address</label>
+      <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+    </div>
 
-        <div class="field">
-          <label for="email">Email Address</label>
-          <input
-            id="email"
-            type="email"
-            autocomplete="email"
-            placeholder="you@example.com"
-            required
-          >
-        </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" minlength="6" autocomplete="current-password" placeholder="At least 6 characters" required>
+    </div>
 
-        <div class="field">
-          <label for="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            autocomplete="current-password"
-            minlength="6"
-            placeholder="At least 6 characters"
-            required
-          >
-        </div>
+    <div class="field hidden" id="confirmField">
+      <label for="confirmPassword">Confirm Password</label>
+      <input id="confirmPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Enter password again">
+    </div>
 
-        <div class="field hidden" id="confirmField">
-          <label for="confirmPassword">Confirm Password</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            autocomplete="new-password"
-            minlength="6"
-            placeholder="Enter password again"
-          >
-        </div>
+    <button class="primary" id="submitButton" type="submit">Sign In →</button>
+  </form>
 
-        <button class="primary" id="submitButton" type="submit">
-          Sign In →
-        </button>
-      </form>
+  <div class="divider"></div>
+  <p class="small">Secure account access powered by Supabase.<br>Never share your password or verification codes.</p>
+</section>
 
-      <div class="divider"></div>
+<section class="card hidden" id="dashboardCard">
+  <div class="eyebrow">MEMBER AREA</div>
+  <h1>You're signed in</h1>
+  <p class="subtitle">Your account session is active.</p>
+  <p class="small">Signed in as</p>
+  <p id="memberEmail" class="dashboard-name"></p>
+  <div class="message success show">Authentication successful. Other member services need to be configured separately.</div>
+  <button type="button" class="secondary" id="signOutButton">Sign Out</button>
+</section>
+</main>
 
-      <p class="small">
-        Secure account access powered by Supabase.<br>
-        Never share your password or verification codes.
-      </p>
-    </section>
+<footer>© 2026 BRJ EMPIRE · Member Portal</footer>
 
-    <section class="card hidden" id="dashboardCard">
-      <div class="eyebrow">MEMBER AREA</div>
-      <h1>You're signed in</h1>
-      <p class="subtitle">Your account session is active.</p>
+<script>
+(() => {
+  "use strict";
 
-      <p class="small">Signed in as</p>
-      <p id="memberEmail" class="dashboard-name"></p>
+  // YOUR SUPABASE PROJECT CONFIGURATION
+  const SUPABASE_URL = "https://lsgidfqksnpfrabpabql.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_e5NFoXng63dKiqKKRbf5Mg_WKzy7hrb";
 
-      <div class="message success show">
-        Authentication successful. Additional member services must be
-        configured separately.
-      </div>
+  const $ = id => document.getElementById(id);
 
-      <button type="button" class="secondary" id="signOutButton">
-        Sign Out
-      </button>
-    </section>
-  </main>
+  const authCard = $("authCard");
+  const dashboardCard = $("dashboardCard");
+  const loginTab = $("loginTab");
+  const registerTab = $("registerTab");
+  const nameField = $("nameField");
+  const confirmField = $("confirmField");
+  const fullName = $("fullName");
+  const email = $("email");
+  const password = $("password");
+  const confirmPassword = $("confirmPassword");
+  const submitButton = $("submitButton");
+  const message = $("message");
 
-  <footer>© 2026 BRJ EMPIRE · Member Portal</footer>
+  let mode = "login";
+  let client = null;
 
-  <script>
-    (() => {
-      "use strict";
+  function showMessage(text, type) {
+    message.textContent = text;
+    message.className = "message show " + type;
+  }
 
-      /*
-       * SUPABASE CONFIGURATION
-       * Paste your own Project URL and publishable/anon key below.
-       * Never put your service_role or secret key in frontend code.
-       */
-      const SUPABASE_URL = "https://lsgidfqksnpfrabpabql.supabase.co/rest/v1/";
-      const SUPABASE_KEY = "sb_publishable_e5NFoXng63dKiqKKRbf5Mg_WKzy7hrb";
+  function clearMessage() {
+    message.textContent = "";
+    message.className = "message";
+  }
 
-      const $ = (id) => document.getElementById(id);
+  function setMode(nextMode) {
+    mode = nextMode === "register" ? "register" : "login";
+    const registering = mode === "register";
 
-      const authCard = $("authCard");
-      const dashboardCard = $("dashboardCard");
-      const loginTab = $("loginTab");
-      const registerTab = $("registerTab");
-      const nameField = $("nameField");
-      const confirmField = $("confirmField");
-      const fullName = $("fullName");
-      const email = $("email");
-      const password = $("password");
-      const confirmPassword = $("confirmPassword");
-      const submitButton = $("submitButton");
-      const message = $("message");
+    loginTab.classList.toggle("active", !registering);
+    registerTab.classList.toggle("active", registering);
 
-      let mode = "login";
-      let supabaseClient = null;
+    $("heading").textContent = registering ? "Create your account" : "Welcome back";
+    $("subtitle").textContent = registering
+      ? "Set up your secure member account."
+      : "Sign in to continue to your account.";
 
-      function showMessage(text, type) {
-        message.textContent = text;
-        message.className = "message show " + type;
+    nameField.classList.toggle("hidden", !registering);
+    confirmField.classList.toggle("hidden", !registering);
+
+    fullName.required = registering;
+    confirmPassword.required = registering;
+    password.autocomplete = registering ? "new-password" : "current-password";
+
+    submitButton.textContent = registering ? "Create Account →" : "Sign In →";
+    clearMessage();
+  }
+
+  // Tabs work independently of Supabase connection status.
+  loginTab.addEventListener("click", () => setMode("login"));
+  registerTab.addEventListener("click", () => setMode("register"));
+
+  function showDashboard(user) {
+    authCard.classList.add("hidden");
+    dashboardCard.classList.remove("hidden");
+    $("memberEmail").textContent = user.email || "Email unavailable";
+  }
+
+  async function init() {
+    try {
+      if (!window.supabase) {
+        showMessage("Supabase library load nahi hui. Internet connection check karke refresh karein.", "error");
+        return;
       }
 
-      function clearMessage() {
-        message.textContent = "";
-        message.className = "message";
+      client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { data, error } = await client.auth.getSession();
+      if (error) throw error;
+
+      if (data.session?.user) showDashboard(data.session.user);
+    } catch (error) {
+      showMessage("Connection error: " + (error.message || "Please try again."), "error");
+    }
+  }
+
+  $("authForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    clearMessage();
+
+    if (!client) {
+      showMessage("Supabase connect nahi hua. Project URL, Publishable Key aur Data API setting check karein.", "error");
+      return;
+    }
+
+    if (mode === "register") {
+      if (fullName.value.trim().length < 2) {
+        showMessage("Please enter your full name.", "error");
+        fullName.focus();
+        return;
       }
-
-      function setMode(newMode) {
-        mode = newMode === "register" ? "register" : "login";
-
-        const registering = mode === "register";
-
-        loginTab.classList.toggle("active", !registering);
-        registerTab.classList.toggle("active", registering);
-
-        $("heading").textContent =
-          registering ? "Create your account" : "Welcome back";
-
-        $("subtitle").textContent =
-          registering
-            ? "Set up your secure member account."
-            : "Sign in to continue to your account.";
-
-        nameField.classList.toggle("hidden", !registering);
-        confirmField.classList.toggle("hidden", !registering);
-
-        fullName.required = registering;
-        confirmPassword.required = registering;
-
-        password.autocomplete =
-          registering ? "new-password" : "current-password";
-
-        submitButton.textContent =
-          registering ? "Create Account →" : "Sign In →";
-
-        clearMessage();
+      if (password.value !== confirmPassword.value) {
+        showMessage("Passwords do not match.", "error");
+        confirmPassword.focus();
+        return;
       }
+    }
 
-      loginTab.addEventListener("click", () => setMode("login"));
-      registerTab.addEventListener("click", () => setMode("register"));
+    submitButton.disabled = true;
+    submitButton.textContent = "Please wait...";
 
-      function validConfig() {
-        return (
-          window.supabase &&
-          SUPABASE_URL.startsWith("https://") &&
-          !SUPABASE_URL.includes("PASTE_YOUR") &&
-          SUPABASE_KEY.length > 20 &&
-          !SUPABASE_KEY.includes("PASTE_YOUR")
-        );
-      }
-
-      function setLoading(loading) {
-        submitButton.disabled = loading;
-        submitButton.textContent = loading
-          ? "Please wait..."
-          : mode === "register"
-            ? "Create Account →"
-            : "Sign In →";
-      }
-
-      function showDashboard(user) {
-        authCard.classList.add("hidden");
-        dashboardCard.classList.remove("hidden");
-        $("memberEmail").textContent = user.email || "Email unavailable";
-      }
-
-      async function init() {
-        if (!validConfig()) {
-          showMessage(
-            "Supabase setup required. Add your Project URL and publishable/anon key in the code before creating an account.",
-            "error"
-          );
-          return;
-        }
-
-        try {
-          supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY,
-            {
-              auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: true
-              }
-            }
-          );
-
-          const { data, error } = await supabaseClient.auth.getSession();
-
-          if (error) throw error;
-
-          if (data.session && data.session.user) {
-            showDashboard(data.session.user);
+    try {
+      if (mode === "register") {
+        const { data, error } = await client.auth.signUp({
+          email: email.value.trim(),
+          password: password.value,
+          options: {
+            data: { full_name: fullName.value.trim() }
           }
-        } catch (error) {
-          showMessage(
-            error.message || "Unable to connect to Supabase.",
-            "error"
-          );
-        }
-      }
+        });
 
-      $("authForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        clearMessage();
+        if (error) throw error;
 
-        if (!validConfig() || !supabaseClient) {
-          showMessage(
-            "Supabase is not configured. Add the correct Project URL and public publishable/anon key in the script.",
-            "error"
-          );
-          return;
-        }
-
-        if (mode === "register") {
-          if (fullName.value.trim().length < 2) {
-            showMessage("Please enter your full name.", "error");
-            fullName.focus();
-            return;
-          }
-
-          if (password.value !== confirmPassword.value) {
-            showMessage("Passwords do not match.", "error");
-            confirmPassword.focus();
-            return;
-          }
-        }
-
-        setLoading(true);
-
-        try {
-          if (mode === "register") {
-            const { data, error } = await supabaseClient.auth.signUp({
-              email: email.value.trim(),
-              password: password.value,
-              options: {
-                data: {
-                  full_name: fullName.value.trim()
-                }
-              }
-            });
-
-            if (error) throw error;
-
-            if (data.session && data.user) {
-              showDashboard(data.user);
-            } else {
-              showMessage(
-                "Registration submitted! Check your email for the verification link, then return here to sign in.",
-                "success"
-              );
-              setMode("login");
-              email.focus();
-            }
-          } else {
-            const { data, error } =
-              await supabaseClient.auth.signInWithPassword({
-                email: email.value.trim(),
-                password: password.value
-              });
-
-            if (error) throw error;
-
-            if (data.user) {
-              showDashboard(data.user);
-            }
-          }
-        } catch (error) {
-          showMessage(
-            error.message || "Something went wrong. Please try again.",
-            "error"
-          );
-        } finally {
-          setLoading(false);
-        }
-      });
-
-      $("signOutButton").addEventListener("click", async () => {
-        if (!supabaseClient) return;
-
-        try {
-          const { error } = await supabaseClient.auth.signOut();
-          if (error) throw error;
-
-          dashboardCard.classList.add("hidden");
-          authCard.classList.remove("hidden");
-          password.value = "";
-          confirmPassword.value = "";
+        if (data.session && data.user) {
+          showDashboard(data.user);
+        } else {
           setMode("login");
-          showMessage("You have signed out.", "success");
-        } catch (error) {
-          alert(error.message || "Could not sign out.");
+          showMessage("Account registration submitted! Email check karke verification link open karein, phir sign in karein.", "success");
+          email.focus();
         }
-      });
+      } else {
+        const { data, error } = await client.auth.signInWithPassword({
+          email: email.value.trim(),
+          password: password.value
+        });
 
+        if (error) throw error;
+        if (data.user) showDashboard(data.user);
+      }
+    } catch (error) {
+      showMessage(error.message || "Something went wrong. Please try again.", "error");
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = mode === "register" ? "Create Account →" : "Sign In →";
+    }
+  });
+
+  $("signOutButton").addEventListener("click", async () => {
+    try {
+      if (!client) return;
+      const { error } = await client.auth.signOut();
+      if (error) throw error;
+
+      dashboardCard.classList.add("hidden");
+      authCard.classList.remove("hidden");
+      password.value = "";
+      confirmPassword.value = "";
       setMode("login");
-      init();
-    })();
-  </script>
+      showMessage("You have signed out.", "success");
+    } catch (error) {
+      alert(error.message || "Could not sign out.");
+    }
+  });
+
+  setMode("login");
+  init();
+})();
+</script>
 </body>
 </html>
